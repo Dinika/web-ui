@@ -1,0 +1,19 @@
+{
+  "name": "web-ui",
+  "version": "1.0.0",
+  "description": "Scene Manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Dinika/web-ui.git"
+  },
+  "author": "Dinika Saxena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dinika/web-ui/issues"
+  },
+  "homepage": "https://github.com/Dinika/web-ui#readme"
+}

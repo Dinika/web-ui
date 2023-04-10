@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        // const mqtt = require('mqtt')
+        if (mqtt) {
+            console.log('MQTT')
+            
+        }
+        // connection option
+        const options = {
+            clean: true, // retain session
+            connectTimeout: 4000, // Timeout period
+            // Authentication information
+            clientId: 'emqx_test',
+        
+            username: undefined,
+            password: undefined,
+        }
+
+        const connected_clients = []
+
+        // Connect string, and specify the connection method by the protocol
+        // ws Unencrypted WebSocket connection
+        // wss Encrypted WebSocket connection
+        // mqtt Unencrypted TCP connection
+        // mqtts Encrypted TCP connection
+        // wxs WeChat applet connection
+        // alis Alipay applet connection
+        const connectUrl = 'ws://192.168.1.204:9001'
+        const client = mqtt.connect(connectUrl, {})
+
+        client.on('connect', function () {
+            client.subscribe('#', function (err) {
+                if (!err) {
+                // client.publish('presence', 'Hello mqtt')
+                    console.log('Subscribed')
+                }
+            })
+        })
+
+        client.on('reconnect', (error) => {
+            console.log('reconnecting:', error)
+        })
+
+        client.on('error', (error) => {
+            console.log('Connection failed:', error)
+        })
+
+        client.on('message', (topic, message) => {
+            const parsed = JSON.parse(message.toString())
+
+            console.log('receive message：', topic, parsed)
+
+            if (parsed.topic == 'new-device') {
+                connected_clients.push(parsed.clientId)
+
+                const sphere = document.createElement('a-sphere')
+                sphere.setAttribute('id', parsed.clientId);
+                sphere.setAttribute('position', connected_clients.length + ' 1.25 -5');
+                sphere.setAttribute('radius', '0.5');
+                sphere.setAttribute('color', '#4CC3D9');
+                document.getElementById('scene').appendChild(sphere)
+            }
+
+            if (parsed.topic == 'change-color') {
+                const sphere = document.getElementById(parsed.clientId)
+
+                sphere.setAttribute('color', parsed.color);
+            }
+        
+        })
+
+    </script>
+
+</head>
+  <body>
+    <a-scene id="scene">
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+  </body>
+</html>
